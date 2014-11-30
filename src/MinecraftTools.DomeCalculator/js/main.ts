@@ -33,6 +33,7 @@ class DomeCalculator {
         for (var z = 0; z < height; z++) {
             var powZ = Math.pow(z + radius - height, 2);
 
+            //calc level
             var canvas = document.createElement("canvas");
             canvas.width = imageSize;
             canvas.height = imageSize;
@@ -60,6 +61,7 @@ class DomeCalculator {
                 blocks: blocks
             });
             totalBlocks += blocks;
+            //calc level end
         }
         return {
             blocks: totalBlocks,
@@ -86,11 +88,26 @@ function setValidState($input: JQuery, valid: boolean) {
         .toggleClass('glyphicon-remove', !valid);
 }
 
-function createPanel(content: JQuery, title: string = ''): JQuery {
+function createStats(total: number):JQuery {
+    var chests = Math.floor(total / 1728);
+    var stacks = Math.floor(total % 1728 / 64);
+    var blocks = total % 1728 % 64;
+    var $el = $('<div/>');
+    if (chests > 0) $el.append(chests + ' <span class="icon icon-chest"></span> + ');
+    if (chests > 0 || stacks > 0) $el.append(stacks + ' <span class="icon icon-stack"></span> + ' + blocks + ' <span class="icon icon-block"></span> = ');
+    $el.append('<strong>' + total + '</strong> <span class="icon icon-block"></span>');
+    return $el;
+}
+
+function createPanel(content: JQuery, blocks:number, title: string = ''): JQuery {
     return $('<div class="panel panel-primary level-panel"/>')
-        .append('<div class="panel-heading"><h3 class="panel-title">' + title + '</h3></div>')
+        .append('<div class="panel-heading"><h2 class="panel-title">' + title + '</h2></div>')
         .append($('<div class="panel-body text-center"/>')
-            .append(content));
+            .append(content)
+        )
+        .append($('<div class="panel-footer"></div>')
+            .append(createStats(blocks))
+        );
 }
 
 $(() => {
@@ -127,10 +144,10 @@ $(() => {
         $result.empty();
 
         var result = calculator.exec(height, chord); //todo noget med defered + progress
-        $result.append(createPanel($(result.profil), 'Profil'));
+        $result.append(createPanel($(result.profil), result.blocks, 'Overall Result'));
         for (var i = 0; i < result.layers.length; i++) {
             var layer = result.layers[i];
-            $levels.append(createPanel($(layer.canvas), 'Level ' + (i + 1)));
+            $levels.append(createPanel($(layer.canvas), layer.blocks, 'Level ' + (i + 1)));
         }
         e.preventDefault();
     });

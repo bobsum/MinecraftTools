@@ -64,6 +64,10 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="img\block.png" />
+    <Content Include="img\chest.png" />
+    <Content Include="img\sprites.png" />
+    <Content Include="img\stack.png" />
     <Content Include="js\jquery-2.1.1.min.map" />
     <Content Include="js\main.js.map" />
     <None Include="Web.Debug.config">
