@@ -16,7 +16,6 @@ class DomeCalculator {
         var imageSize = chord * this.pixelSize + 1;
         
         var radius = (Math.pow(height, 2) + Math.pow(chord / 2, 2)) / (2 * height);
-
         
         var powRadiusOuter = Math.pow(radius, 2);
         var powRadiusInner = Math.pow(radius - 1.0000001, 2);
@@ -33,7 +32,6 @@ class DomeCalculator {
         for (var z = 0; z < height; z++) {
             var powZ = Math.pow(z + radius - height, 2);
 
-            //calc level
             var canvas = document.createElement("canvas");
             canvas.width = imageSize;
             canvas.height = imageSize;
@@ -61,7 +59,6 @@ class DomeCalculator {
                 blocks: blocks
             });
             totalBlocks += blocks;
-            //calc level end
         }
         return {
             blocks: totalBlocks,
@@ -133,22 +130,28 @@ $(() => {
         var heightValid = (height >= 1);
         var chordValid = (chord >= 2 && (Math.ceil(chord / 2) >= height || !heightValid));
 
-        $calculate.prop("disabled", !(heightValid && chordValid));
+        $calculate.prop('disabled', !(heightValid && chordValid));
 
         setValidState($height, heightValid);
         setValidState($chord, chordValid);
     });
 
     $calculate.click((e) => {
+        $calculate.prop('disabled', true);
+        $calculate.find('.spin').removeClass('hidden');
+
         $levels.empty();
         $result.empty();
 
-        var result = calculator.exec(height, chord); //todo noget med defered + progress
-        $result.append(createPanel($(result.profil), result.blocks, 'Overall Result'));
-        for (var i = 0; i < result.layers.length; i++) {
-            var layer = result.layers[i];
-            $levels.append(createPanel($(layer.canvas), layer.blocks, 'Level ' + (i + 1)));
-        }
+        setTimeout(() => {
+            var result = calculator.exec(height, chord);
+            $result.append(createPanel($(result.profil), result.blocks, 'Overall Result'));
+            for (var i = 0; i < result.layers.length; i++) {
+                var layer = result.layers[i];
+                $levels.append(createPanel($(layer.canvas), layer.blocks, 'Level ' + (i + 1)));
+            }
+            setTimeout(() => { $calculate.find('.spin').addClass('hidden'); }, 0);
+        }, 0);
         e.preventDefault();
     });
 });
